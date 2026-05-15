@@ -226,6 +226,15 @@ ColumnLayout {
                 value: appSettings._frameSize
             }
             Label {
+                text: qsTr("Window Decorations")
+                visible: !appSettings.isMacOS
+            }
+            CheckBox {
+                checked: appSettings.windowDecorations
+                onCheckedChanged: appSettings.windowDecorations = checked
+                visible: !appSettings.isMacOS
+            }
+            Label {
                 text: qsTr("Opacity")
                 visible: !appSettings.isMacOS
             }

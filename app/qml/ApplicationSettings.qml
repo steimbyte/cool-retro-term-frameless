@@ -41,6 +41,7 @@ QtObject {
 
     // GENERAL SETTINGS ///////////////////////////////////////////////////////
     property bool showMenubar: false
+    property bool windowDecorations: true  // steimer mod: frameless toggle
 
     property bool showTerminalSize: true
     property real windowScaling: 1.0

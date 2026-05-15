@@ -29,6 +29,9 @@ ApplicationWindow {
     width: 1024
     height: 768
 
+    // Frameless window support (steimer mod)
+    flags: appSettings.windowDecorations ? Qt.Window : Qt.Window | Qt.FramelessWindowHint
+
     // Show the window once it is ready.
     Component.onCompleted: {
         visible = true
