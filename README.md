@@ -15,16 +15,78 @@ This terminal emulator works under Linux and macOS and requires Qt6.
 Settings such as colors, fonts, and effects can be accessed via context menu.
 
 ## Screenshots
-![Image](<https://i.imgur.com/TNumkDn.png>)
-![Image](<https://i.imgur.com/hfjWOM4.png>)
-![Image](<https://i.imgur.com/GYRDPzJ.jpg>)
+![Image](https://i.imgur.com/TNumkDn.png)
+![Image](https://i.imgur.com/hfjWOM4.png)
+![Image](https://i.imgur.com/GYRDPzJ.jpg)
+
+---
+
+## 🔧 Frameless Mode (steimer mod)
+
+This fork adds **frameless window support** - remove title bar and window decorations for a cleaner look!
+
+### Screenshot
+
+**Frameless Mode (no window decorations):**
+![Cool Retro Term Frameless](https://i.imgur.com/sELnfzO.png)
+
+### How to Enable
+
+1. Open Cool Retro Term
+2. Go to **Settings** → **General**
+3. Uncheck **Window Decorations**
+4. Restart the application
+
+The setting is saved automatically and persists across sessions.
+
+---
 
 ## Install
 
-If you want to get a hold of the latest version, just go to the Releases page and grab the latest AppImage (Linux) or dmg (macOS).
+### Pre-built
 
-Alternatively, most distributions such as Ubuntu, Fedora or Arch already package cool-retro-term in their official repositories.
+Grab the latest release from the Releases page or install via your package manager:
 
-## Building
+```bash
+# Arch Linux
+sudo pacman -S cool-retro-term
+
+# macOS (Homebrew)
+brew install --cask cool-retro-term
+```
+
+### Build from Source
+
+#### Prerequisites
+
+- Qt6 (Qt5 is not supported)
+- CMake or qmake
+- C++ compiler
+
+#### Build Steps
+
+```bash
+# Clone the repository
+git clone https://github.com/steimbyte/cool-retro-term-frameless.git
+cd cool-retro-term-frameless
+
+# Initialize submodules
+git submodule update --init --recursive
+
+# Build with Qt6
+/usr/lib/qt6/bin/qmake
+make -j$(nproc)
+
+# Install
+sudo make install
+```
+
+### Building (Original Repository)
 
 Check out the wiki and follow the instructions on how to build it on [Linux](https://github.com/Swordfish90/cool-retro-term/wiki/Build-Instructions-(Linux)) and [macOS](https://github.com/Swordfish90/cool-retro-term/wiki/Build-Instructions-(macOS)).
+
+---
+
+## Original Project
+
+https://github.com/Swordfish90/cool-retro-term
