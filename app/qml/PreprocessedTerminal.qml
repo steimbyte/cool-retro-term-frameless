@@ -213,18 +213,59 @@ Item{
     property alias contextmenu: menuLoader.item
 
     MouseArea {
+        id: terminalMouseArea
         property real margin: appSettings.margin
         property real frameSize: appSettings.frameSize * terminalWindow.normalizedWindowScale
+
+        // Coasting scroll state
+        property real coastVelocity: 0
+        property bool isCoasting: false
 
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
         anchors.fill: parent
         cursorShape: kterminal.terminalUsesMouse ? Qt.ArrowCursor : Qt.IBeamCursor
+
+        // Coasting timer - keeps scrolling after wheel release
+        Timer {
+            id: coastTimer
+            interval: 20  // ~50fps for smooth coasting
+            repeat: true
+            running: terminalMouseArea.isCoasting && Math.abs(terminalMouseArea.coastVelocity) > 1
+            onTriggered: {
+                if (Math.abs(terminalMouseArea.coastVelocity) <= 1) {
+                    terminalMouseArea.isCoasting = false;
+                    terminalMouseArea.coastVelocity = 0;
+                    return;
+                }
+
+                // Simulate wheel scroll in coast direction
+                var scrollDir = terminalMouseArea.coastVelocity > 0 ? -1 : 1;
+                var coord = Qt.point(kterminal.width / 2, kterminal.height / 2);
+                kterminal.simulateWheel(coord.x, coord.y, 0, 0, Qt.size(0, scrollDir * 120));
+
+                // Apply friction
+                terminalMouseArea.coastVelocity *= 0.88;
+            }
+        }
+
         onWheel: function(wheel) {
             if (wheel.modifiers & Qt.ControlModifier) {
                wheel.angleDelta.y > 0 ? zoomIn.trigger() : zoomOut.trigger();
             } else {
+                // Stop coast, do immediate scroll
+                isCoasting = false;
+                coastTimer.running = false;
+
+                var delta = wheel.angleDelta.y;
                 var coord = correctDistortion(wheel.x, wheel.y);
                 kterminal.simulateWheel(coord.x, coord.y, wheel.buttons, wheel.modifiers, wheel.angleDelta);
+
+                // Start coast if wheel was fast enough
+                if (Math.abs(delta) > 50) {
+                    coastVelocity = delta * 0.2;
+                    isCoasting = true;
+                    coastTimer.running = true;
+                }
             }
         }
         onDoubleClicked: function(mouse) {
