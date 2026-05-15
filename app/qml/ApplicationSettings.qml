@@ -167,8 +167,6 @@ QtObject {
             "showMenubar": showMenubar,
             "bloomQuality": bloomQuality,
             "burnInQuality": burnInQuality,
-            "useCustomCommand": useCustomCommand,
-            "customCommand": customCommand,
             "windowDecorations": windowDecorations  // steimer mod
         }
         return stringify(settings)
