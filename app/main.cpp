@@ -46,6 +46,17 @@ int main(int argc, char *argv[])
     QLoggingCategory::setFilterRules("qt.qml.connections.warning=false");
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Round);
 
+    // Check for --new-instance flag (steimer mod)
+    bool forceNewInstance = false;
+    QStringList argsFiltered;
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--new-instance") == 0) {
+            forceNewInstance = true;
+        } else {
+            argsFiltered << argv[i];
+        }
+    }
+
 // #if defined (Q_OS_LINUX)
 //     setenv("QSG_RENDER_LOOP", "threaded", 0);
 // #endif
@@ -83,19 +94,22 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    QApplication app(argc, argv);
+    QApplication app(argsFiltered.count(), argsFiltered.data());
     app.setAttribute(Qt::AA_MacDontSwapCtrlAndMeta, true);
     app.setApplicationName(QStringLiteral("cool-retro-term"));
     app.setOrganizationName(QStringLiteral("cool-retro-term"));
     app.setOrganizationDomain(QStringLiteral("cool-retro-term"));
     app.setApplicationVersion(appVersion);
 
-    KDSingleApplication singleApp(QStringLiteral("cool-retro-term"));
-
-    if (!singleApp.isPrimaryInstance()) {
-        if (singleApp.sendMessage("new-window"))
-            return 0;
-        qWarning() << "KDSingleApplication: primary not reachable, continuing as independent instance.";
+    // steimer mod: --new-instance flag for multi-instance support
+    KDSingleApplication *singleApp = nullptr;
+    if (!forceNewInstance) {
+        singleApp = new KDSingleApplication(QStringLiteral("cool-retro-term"));
+        if (!singleApp->isPrimaryInstance()) {
+            if (singleApp->sendMessage("new-window"))
+                return 0;
+            qWarning() << "KDSingleApplication: primary not reachable, continuing as independent instance.";
+        }
     }
 
     QQmlApplicationEngine engine;
@@ -155,11 +169,14 @@ int main(int argc, char *argv[])
         QMetaObject::invokeMethod(rootObject, "createWindow", Qt::QueuedConnection);
     };
 
-    QObject::connect(&singleApp, &KDSingleApplication::messageReceived, &app,
-                     [&requestNewWindow](const QByteArray &message) {
-        if (message.isEmpty() || message == QByteArray("new-window"))
-            requestNewWindow();
-    });
+    // steimer mod: only connect signal if using singleApp
+    if (singleApp) {
+        QObject::connect(singleApp, &KDSingleApplication::messageReceived, &app,
+                         [&requestNewWindow](const QByteArray &message) {
+            if (message.isEmpty() || message == QByteArray("new-window"))
+                requestNewWindow();
+        });
+    }
 
 #if defined(Q_OS_MAC)
     QMenu *dockMenu = new QMenu(nullptr);
