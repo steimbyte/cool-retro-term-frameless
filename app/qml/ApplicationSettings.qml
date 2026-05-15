@@ -168,7 +168,8 @@ QtObject {
             "bloomQuality": bloomQuality,
             "burnInQuality": burnInQuality,
             "useCustomCommand": useCustomCommand,
-            "customCommand": customCommand
+            "customCommand": customCommand,
+            "windowDecorations": windowDecorations  // steimer mod
         }
         return stringify(settings)
     }
@@ -261,6 +262,8 @@ QtObject {
                 !== undefined ? settings.useCustomCommand : useCustomCommand
         customCommand = settings.customCommand
                 !== undefined ? settings.customCommand : customCommand
+        windowDecorations = settings.windowDecorations
+                !== undefined ? settings.windowDecorations : windowDecorations  // steimer mod
     }
 
     function loadProfileString(profileString) {
