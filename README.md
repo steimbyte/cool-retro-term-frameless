@@ -90,3 +90,9 @@ Check out the wiki and follow the instructions on how to build it on [Linux](htt
 ## Original Project
 
 https://github.com/Swordfish90/cool-retro-term
+
+---
+
+## Hinweis zur KI-Unterstützung
+
+Bei der Entwicklung dieses Projekts wurden teilweise oder vollständig KI-gestützte Tools und Technologien eingesetzt.
